@@ -1,0 +1,34 @@
+# Node modules (dependencies)
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment & secrets
+.env
+.env.local
+
+# Build & cache
+dist/
+build/
+.cache/
+tmp/
+temp/
+
+# Puppeteer Chromium downloads
+.puppeteer/
+
+# VSCode settings (optional, kalau pakai VSCode)
+.vscode/
+
+# Dependency lock file (optional, kalau hanya pakai yarn/npm saja)
+package-lock.json
+yarn.lock
