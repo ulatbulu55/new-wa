@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@open-wa/wa-automate": "^4.76.0",
+    "express": "^4.21.2",
+    "puppeteer": "^24.14.0",
+    "xlsx": "^0.18.5"
+  }
+}
