@@ -1,19 +1,27 @@
 {
-  "name": "your-wa-bot",     
+  "name": "whatsapp-checker-bot",
   "version": "1.0.0",
-  "description": "WhatsApp bot for number checking", 
-  "main": "index.js",    
+  "description": "A WhatsApp bot to check registered/unregistered numbers.",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js", 
-    "postinstall": "puppeteer install"
+    "start": "node server.js"
+ "postinstall": "puppeteer install" 
   },
- {
+  "keywords": [
+    "whatsapp-bot",
+    "open-wa",
+    "puppeteer",
+    "render",
+    "nodejs"
+  ],
+  "author": "Your Name (Optional)",
+  "license": "MIT",
   "dependencies": {
     "@open-wa/wa-automate": "^4.76.0",
+    "@sparticuz/chromium": "^120.0.0",
     "express": "^4.21.2",
     "puppeteer": "^24.14.0",
-    "xlsx": "^0.18.5",
-    "@sparticuz/chromium": "^120.0.0", 
-    "puppeteer-core": "^21.0.0"    
+    "puppeteer-core": "^21.0.0",
+    "xlsx": "^0.18.5"
   }
 }
