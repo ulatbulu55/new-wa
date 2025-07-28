@@ -1,11 +1,11 @@
 {
-  "name": "your-wa-bot",      // Anda bisa ganti nama ini
+  "name": "your-wa-bot",     
   "version": "1.0.0",
-  "description": "WhatsApp bot for number checking", // Anda bisa ganti deskripsi ini
-  "main": "index.js",      // Pastikan ini adalah file utama bot Anda (misal: app.js, bot.js)
+  "description": "WhatsApp bot for number checking", 
+  "main": "index.js",    
   "scripts": {
-    "start": "node index.js", // Ganti 'index.js' jika file utama Anda berbeda
-    "postinstall": "puppeteer install" // <-- TAMBAHKAN BARIS INI
+    "start": "node index.js", 
+    "postinstall": "puppeteer install"
   },
   "dependencies": {
     "@open-wa/wa-automate": "^4.76.0",
