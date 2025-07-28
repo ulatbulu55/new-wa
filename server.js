@@ -1,9 +1,9 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const cekNomor = require('./bot'); // Pastikan ini mengimpor fungsi 'cekNomor'
+const cekNomor = require('./bot'); 
 const app = express();
-const PORT = process.env.PORT || 3000; // <--- UBAH INI: Gunakan variabel lingkungan PORT dari Render
+const PORT = process.env.PORT || 3000; 
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -18,12 +18,11 @@ app.post('/cek', async (req, res) => {
       .map(n => n.trim().replace(/[^0-9+]/g, ''))
       .filter(n => n.length > 0);
 
-    // Pastikan folder 'temp' atau sejenisnya ada jika Anda menulis file sementara
-    // Render memiliki ephemeral filesystem, jadi file ini hanya ada selama instance berjalan
+   
     fs.writeFileSync('numbers.json', JSON.stringify(lines, null, 2));
 
     console.log(`▶️ Mulai cek ${lines.length} nomor...`);
-    // Pastikan cekNomor menerima client sebagai argumen
+   
     const hasil = await cekNomor(global.client);
 
     res.json({ status: 'ok', data: hasil });
@@ -35,42 +34,38 @@ app.post('/cek', async (req, res) => {
 
 const wa = require('@open-wa/wa-automate');
 wa.create({
-  // <--- HAPUS ATAU KOMENTARI BARIS INI: executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-  sessionId: 'session_bot_wa', // Nama sesi Anda (disarankan)
-  multiDevice: true,           // Untuk mendukung multi-perangkat
-  authTimeout: 60,             // Waktu tunggu autentikasi
-  cacheEnabled: false,         // Jika tidak perlu cache
-  // Opsi Puppeteer untuk lingkungan Render, ini WAJIB!
+
+  sessionId: 'session_bot_wa', 
+  multiDevice: true,          
+  authTimeout: 60,            
+  cacheEnabled: false,        
+ 
   puppeteer: {
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage', // Penting untuk lingkungan dengan RAM terbatas
+      '--disable-dev-shm-usage', 
       '--disable-accelerated-2d-canvas',
       '--no-first-run',
       '--no-zygote',
-      '--single-process',      // Membantu mengurangi penggunaan memori
+      '--single-process',    
       '--disable-gpu',
-      '--incognito'            // Untuk memastikan sesi bersih setiap kali
+      '--incognito'           
     ],
-    // Jika Anda ingin mengarahkan Puppeteer ke path spesifik di Render,
-    // Anda bisa menggunakan process.env.CHROMIUM_PATH atau bergantung pada 'puppeteer install'
-    // Umumnya, jika 'puppeteer install' di 'postinstall' berhasil, ini tidak perlu
-    // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined
+    
   }
 }).then((client) => {
   global.client = client;
   app.listen(PORT, () => {
-    console.log(`✅ Server running di port ${PORT}`); // Ganti localhost dengan port dinamis
+    console.log(`✅ Server running di port ${PORT}`);
   });
 }).catch(err => {
   console.error("❌ Gagal memulai WA client:", err);
-  process.exit(1); // Keluar dari proses jika gagal
-});
+  process.exit(1);
 
 function cleanup() {
   console.log('⏳ Menjalankan cleanup sebelum shutdown...');
-  const folderPath = path.join(__dirname, 'hasil'); // folder penyimpanan hasil
+  const folderPath = path.join(__dirname, 'hasil');
 
   if (fs.existsSync(folderPath)) {
     const files = fs.readdirSync(folderPath);
@@ -97,23 +92,19 @@ function cleanup() {
       }
     }
   });
-
-  // Jika Anda ingin prosesnya keluar setelah cleanup (misalnya saat restart)
-  // process.exit(0); // Hanya jika Anda ingin proses langsung mati setelah cleanup
 }
 
-// Tambahkan penanganan untuk kesalahan unhandled
+
 process.on('uncaughtException', err => {
     console.error('❌ Uncaught Exception:', err);
-    cleanup(); // Lakukan cleanup dan keluar
+    cleanup();
 });
 
 process.on('unhandledRejection', (reason, promise) => {
     console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-    cleanup(); // Lakukan cleanup dan keluar
+    cleanup();
 });
 
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
-// Hapus 'exit' dari cleanup event, karena 'exit' tidak bisa melakukan async ops
-// process.on('exit', cleanup);
+
