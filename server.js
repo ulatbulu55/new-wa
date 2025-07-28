@@ -1,18 +1,15 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const cekNomor = require('./bot'); 
+const cekNomor = require('./bot');
 const app = express();
-const PORT = process.env.PORT || 3000; 
+const PORT = process.env.PORT || 3000;
 
-
-const chromium = require('@sparticuz/chromium');
+const chromium = require('@sparticuz/chromium'); 
 const wa = require('@open-wa/wa-automate');
-
 
 app.use(express.json());
 app.use(express.static('public'));
-
 
 app.post('/cek', async (req, res) => {
   try {
@@ -23,14 +20,12 @@ app.post('/cek', async (req, res) => {
 
     const lines = raw
       .split('\n')
-      .map(n => n.trim().replace(/[^0-9+]/g, '')) 
+      .map(n => n.trim().replace(/[^0-9+]/g, ''))
       .filter(n => n.length > 0);
 
-   
     fs.writeFileSync('numbers.json', JSON.stringify(lines, null, 2));
 
     console.log(`▶️ Mulai cek ${lines.length} nomor...`);
-
     const hasil = await cekNomor(global.client);
 
     res.json({ status: 'ok', data: hasil });
@@ -41,43 +36,45 @@ app.post('/cek', async (req, res) => {
 });
 
 
-wa.create({
-  sessionId: 'session_bot_wa', 
-  multiDevice: true,          
-  authTimeout: 60,         
-  cacheEnabled: false,      
+async function initializeBotAndServer() { 
+  try {
+    const client = await wa.create({ 
+      sessionId: 'session_bot_wa',
+      multiDevice: true,
+      authTimeout: 60,
+      cacheEnabled: false,
+      puppeteer: {
+        executablePath: await chromium.executablePath(), 
+        args: [
+          ...chromium.args,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process',
+          '--disable-gpu',
+          '--incognito'
+        ],
+      }
+    });
 
-  puppeteer: {
-    executablePath: await chromium.executablePath(), 
-    args: [
-      ...chromium.args, 
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage', 
-      '--disable-accelerated-2d-canvas',
-      '--no-first-run',
-      '--no-zygote',
-      '--single-process',     
-      '--disable-gpu',
-      '--incognito'           
-    ],
+    global.client = client;
+    app.listen(PORT, () => {
+      console.log(`✅ Server running di port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Gagal memulai WA client atau server:", err);
+    process.exit(1); 
   }
-})
-.then((client) => {
-  global.client = client; 
-  app.listen(PORT, () => {
-    console.log(`✅ Server running di port ${PORT}`);
-  });
-})
-.catch(err => {
-  console.error("❌ Gagal memulai WA client:", err);
-  process.exit(1);
-});
+}
 
+initializeBotAndServer(); 
 
 function cleanup() {
   console.log('⏳ Menjalankan cleanup sebelum shutdown...');
-  const folderPath = path.join(__dirname, 'hasil'); 
+  const folderPath = path.join(__dirname, 'hasil');
 
   if (fs.existsSync(folderPath)) {
     const files = fs.readdirSync(folderPath);
@@ -91,7 +88,6 @@ function cleanup() {
       }
     }
   }
-
 
   const filesToDelete = ['numbers.json', 'hasil.json', 'hasil.xlsx', 'hasil.txt'];
   filesToDelete.forEach(file => {
@@ -109,17 +105,17 @@ function cleanup() {
 
 
 process.on('SIGINT', cleanup);
-process.on('SIGTERM', cleanup); 
+process.on('SIGTERM', cleanup);
 
 
 process.on('uncaughtException', err => {
     console.error('❌ Uncaught Exception:', err);
     cleanup();
-    process.exit(1); 
+    process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
     console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-    cleanup(); 
+    cleanup();
     process.exit(1);
 });
