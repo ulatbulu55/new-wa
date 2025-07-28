@@ -4,21 +4,21 @@
   "description": "A WhatsApp bot to check registered/unregistered numbers.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
- 
+    "start": "node server.js"
   },
   "keywords": [
     "whatsapp-bot",
     "open-wa",
     "puppeteer",
-    "render",
-    "nodejs"
+    "railway",
+    "nodejs",
+    "number-checker"
   ],
   "author": "Your Name (Optional)",
   "license": "MIT",
   "dependencies": {
     "@open-wa/wa-automate": "^4.76.0",
-    "@sparticuz/chromium": "^138.0.2",   
+    "@sparticuz/chromium": "^138.0.2",
     "express": "^4.21.2",
     "puppeteer": "^21.0.0",
     "puppeteer-core": "^21.0.0",
