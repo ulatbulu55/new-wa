@@ -36,13 +36,14 @@ app.post('/cek', async (req, res) => {
 });
 
 
-async function initializeBotAndServer() { 
+async function initializeBotAndServer() {
   try {
-    const client = await wa.create({ 
+    const client = await wa.create({
       sessionId: 'session_bot_wa',
       multiDevice: true,
       authTimeout: 60,
       cacheEnabled: false,
+      
       puppeteer: {
         executablePath: await chromium.executablePath(), 
         args: [
@@ -57,7 +58,9 @@ async function initializeBotAndServer() {
           '--disable-gpu',
           '--incognito'
         ],
-      }
+      },
+      
+      browser: 'chromium' 
     });
 
     global.client = client;
@@ -66,11 +69,16 @@ async function initializeBotAndServer() {
     });
   } catch (err) {
     console.error("❌ Gagal memulai WA client atau server:", err);
-    process.exit(1); 
+   
+    if (err.message.includes('Browser was not found')) {
+        console.error("DEBUG: Pastikan @sparticuz/chromium sudah terinstal dengan benar dan puppeteer config di server.js sudah tepat.");
+    }
+    process.exit(1);
   }
 }
 
-initializeBotAndServer(); 
+initializeBotAndServer();
+ 
 
 function cleanup() {
   console.log('⏳ Menjalankan cleanup sebelum shutdown...');
