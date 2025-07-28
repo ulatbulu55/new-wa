@@ -18,7 +18,7 @@ app.post('/cek', async (req, res) => {
       .map(n => n.trim().replace(/[^0-9+]/g, ''))
       .filter(n => n.length > 0);
 
-   
+
     fs.writeFileSync('numbers.json', JSON.stringify(lines, null, 2));
 
     console.log(`▶️ Mulai cek ${lines.length} nomor...`);
@@ -36,10 +36,10 @@ const wa = require('@open-wa/wa-automate');
 wa.create({
 
   sessionId: 'session_bot_wa', 
-  multiDevice: true,          
-  authTimeout: 60,            
-  cacheEnabled: false,        
- 
+  multiDevice: true,
+  authTimeout: 60,         
+  cacheEnabled: false,       
+  
   puppeteer: {
     args: [
       '--no-sandbox',
@@ -48,7 +48,7 @@ wa.create({
       '--disable-accelerated-2d-canvas',
       '--no-first-run',
       '--no-zygote',
-      '--single-process',    
+      '--single-process',      
       '--disable-gpu',
       '--incognito'           
     ],
@@ -57,15 +57,16 @@ wa.create({
 }).then((client) => {
   global.client = client;
   app.listen(PORT, () => {
-    console.log(`✅ Server running di port ${PORT}`);
+    console.log(`✅ Server running di port ${PORT}`); 
   });
 }).catch(err => {
   console.error("❌ Gagal memulai WA client:", err);
-  process.exit(1);
+  process.exit(1); 
+});
 
 function cleanup() {
   console.log('⏳ Menjalankan cleanup sebelum shutdown...');
-  const folderPath = path.join(__dirname, 'hasil');
+  const folderPath = path.join(__dirname, 'hasil'); 
 
   if (fs.existsSync(folderPath)) {
     const files = fs.readdirSync(folderPath);
@@ -97,14 +98,13 @@ function cleanup() {
 
 process.on('uncaughtException', err => {
     console.error('❌ Uncaught Exception:', err);
-    cleanup();
+    cleanup(); 
 });
 
 process.on('unhandledRejection', (reason, promise) => {
     console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-    cleanup();
+    cleanup(); 
 });
 
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
-
